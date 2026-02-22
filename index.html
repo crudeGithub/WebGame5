@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>This Is Blast</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="game-container">
+        <!-- Top bar/Header area -->
+        <div id="header">
+            <div id="level-indicator">LEVEL <span id="level-display">1</span></div>
+        </div>
+
+        <!-- The main grid where blocks live -->
+        <div id="grid-container">
+            <div id="grid"></div>
+        </div>
+
+        <!-- Projectile canvas overlay for drawing flying balls and particles -->
+        <canvas id="effects-canvas"></canvas>
+
+        <!-- The buckets acting as targets at the bottom -->
+        <div id="targets-area">
+            <div id="active-targets">
+                <!-- 3 Spawns dynamically -->
+            </div>
+            <div id="queued-targets" class="scrollable-queue">
+                <!-- Next targets in line -->
+            </div>
+        </div>
+
+        <!-- Win/Loss Overlay -->
+        <div id="overlay" class="hidden">
+            <h1 id="overlay-title">Level Clear!</h1>
+            <button id="next-level-btn">Next Level</button>
+        </div>
+
+        <div id="game-over-overlay" class="hidden">
+            <h1 id="game-over-title">Out of Moves!</h1>
+            <button id="restart-btn">Restart Level</button>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>

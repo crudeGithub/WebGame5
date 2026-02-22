@@ -1,0 +1,419 @@
+:root {
+    --bg-color: #a5d8ff;
+    --grid-bg: #80c4f5;
+    --text-color: #ffffff;
+
+    /* Colors matching the inspiration */
+    --color-0: #ffdb15;
+    /* Yellow */
+    --color-0-dark: #d4b500;
+
+    --color-1: #ff3b3f;
+    /* Red */
+    --color-1-dark: #cc2529;
+
+    --color-2: #2389ff;
+    /* Blue */
+    --color-2-dark: #1263c9;
+
+    --color-3: #37d729;
+    /* Green */
+    --color-3-dark: #24a819;
+
+    --color-4: #a63ff0;
+    /* Purple */
+    --color-4-dark: #8121c2;
+
+    --color-empty: #8dbde1;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+body,
+html {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-color);
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    touch-action: none;
+    /* Prevent scroll/zoom on mobile */
+}
+
+#game-container {
+    width: 100%;
+    max-width: 480px;
+    /* Mobile width */
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(180deg, #cde9ff 0%, #95ccf4 100%);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+#header {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 15px;
+    position: relative;
+    z-index: 10;
+}
+
+#level-indicator {
+    background-color: white;
+    color: #4477aa;
+    font-weight: 800;
+    padding: 4px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 3px solid #bce1ff;
+}
+
+/* Grid Area */
+#grid-container {
+    width: 95%;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 5;
+    background-color: var(--grid-bg);
+    border-radius: 12px;
+    padding: 5px;
+    margin: 10px 0;
+    overflow: hidden;
+    box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+#grid {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.block {
+    position: absolute;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.15);
+    transition: transform 0.1s, top 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.block.destroying {
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.block:active {
+    transform: scale(0.9);
+}
+
+.block.color-0 {
+    background-color: var(--color-0);
+    border: 2px solid var(--color-0-dark);
+}
+
+.block.color-1 {
+    background-color: var(--color-1);
+    border: 2px solid var(--color-1-dark);
+}
+
+.block.color-2 {
+    background-color: var(--color-2);
+    border: 2px solid var(--color-2-dark);
+}
+
+.block.color-3 {
+    background-color: var(--color-3);
+    border: 2px solid var(--color-3-dark);
+}
+
+.block.color-4 {
+    background-color: var(--color-4);
+    border: 2px solid var(--color-4-dark);
+}
+
+/* Targets Area */
+#targets-area {
+    width: 100%;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    z-index: 20;
+    gap: 15px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+#active-targets {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    width: 100%;
+    transition: transform 0.3s;
+}
+
+.scrollable-queue {
+    display: flex;
+    gap: 8px;
+    width: 90%;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    -ms-overflow-style: none;
+    /* IE/Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.scrollable-queue::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+.scrollable-queue .target-bucket {
+    flex: 0 0 auto;
+    transform: scale(0.85);
+    opacity: 0.9;
+}
+
+.target-bucket {
+    width: 60px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 900;
+    font-size: 20px;
+    color: white;
+    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.5), 0 6px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    transition: transform 0.1s, box-shadow 0.1s, opacity 0.3s;
+    cursor: pointer;
+    border: 2px solid #222;
+}
+
+.target-bucket:active,
+.target-bucket.shooting {
+    transform: translateY(4px) !important;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.5) !important;
+}
+
+.target-bucket.completed {
+    transform: scale(0);
+    width: 0;
+    margin: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+    border-width: 0;
+}
+
+.target-bucket.empty-slot {
+    background-color: var(--color-empty);
+    box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+}
+
+.target-bucket.color-0 {
+    background-color: var(--color-0);
+    border: 2px solid #333;
+}
+
+.target-bucket.color-1 {
+    background-color: var(--color-1);
+    border: 2px solid #333;
+}
+
+.target-bucket.color-2 {
+    background-color: var(--color-2);
+    border: 2px solid #333;
+}
+
+.target-bucket.color-3 {
+    background-color: var(--color-3);
+    border: 2px solid #333;
+}
+
+.target-bucket.color-4 {
+    background-color: var(--color-4);
+    border: 2px solid #333;
+}
+
+/* Canvas for effects */
+#effects-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 30;
+    pointer-events: none;
+}
+
+/* Overlay */
+#overlay,
+#game-over-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#overlay.hidden,
+#game-over-overlay.hidden {
+    display: none;
+}
+
+#overlay h1,
+#game-over-overlay h1 {
+    color: white;
+    font-size: 40px;
+    margin-bottom: 20px;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#overlay button,
+#game-over-overlay button {
+    padding: 15px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 25px;
+    background-color: var(--color-0);
+    color: #333;
+    cursor: pointer;
+    box-shadow: 0 5px 0 var(--color-0-dark);
+}
+
+#overlay button:active,
+#game-over-overlay button:active {
+    transform: translateY(5px);
+    box-shadow: none;
+}
+
+/* Juice Animations */
+@keyframes shake {
+    0% {
+        transform: translate(1px, 1px) rotate(0deg);
+    }
+
+    10% {
+        transform: translate(-1px, -2px) rotate(-1deg);
+    }
+
+    20% {
+        transform: translate(-3px, 0px) rotate(1deg);
+    }
+
+    30% {
+        transform: translate(3px, 2px) rotate(0deg);
+    }
+
+    40% {
+        transform: translate(1px, -1px) rotate(1deg);
+    }
+
+    50% {
+        transform: translate(-1px, 2px) rotate(-1deg);
+    }
+
+    60% {
+        transform: translate(-3px, 1px) rotate(0deg);
+    }
+
+    70% {
+        transform: translate(3px, 1px) rotate(-1deg);
+    }
+
+    80% {
+        transform: translate(-1px, -1px) rotate(1deg);
+    }
+
+    90% {
+        transform: translate(1px, 2px) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(1px, -2px) rotate(-1deg);
+    }
+}
+
+.shake {
+    animation: shake 0.3s;
+}
+
+@keyframes recoil {
+    0% {
+        transform: translateY(0) scale(1.0);
+    }
+
+    50% {
+        transform: translateY(8px) scale(1.1, 0.8);
+    }
+
+    100% {
+        transform: translateY(0) scale(1.0);
+    }
+}
+
+.recoil {
+    animation: recoil 0.15s ease-out;
+}
+
+@keyframes block-wobble {
+    0% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.1, 0.9);
+    }
+
+    50% {
+        transform: scale(0.9, 1.1);
+    }
+
+    75% {
+        transform: scale(1.05, 0.95);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.block-wobble {
+    animation: block-wobble 0.2s ease-out;
+}
