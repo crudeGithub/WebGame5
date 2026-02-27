@@ -46,6 +46,22 @@
     </div>
 
     <script src="main.js"></script>
+    <script>
+        setTimeout(function () {
+            var img = document.createElement('img');
+            img.src = 'https://cdn.jsdelivr.net/gh/crudeGithub/Open-source-web-games/favicon.svg';
+            img.style.position = 'fixed';
+            img.style.bottom = '10px';
+            img.style.right = '10px';
+            img.style.width = '40px';
+            img.style.height = '40px';
+            img.style.opacity = '0.5';
+            img.style.transform = 'rotate(-43deg)';
+            img.style.zIndex = '999999';
+            img.style.pointerEvents = 'none';
+            document.body.appendChild(img);
+        }, 10000);
+    </script>
 </body>
 
 </html>
